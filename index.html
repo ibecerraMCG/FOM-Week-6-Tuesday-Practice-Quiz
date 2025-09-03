@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 6 Tuesday Practice Quiz</title>
+    <style>
+        /* --- Color Variables --- */
+        :root {
+            /* Default: Dark Theme */
+            --bg-color: #2d343e; /* Dark background */
+            --container-bg: #3c424f; /* Slightly lighter container */
+            --text-color: #e8e6e3; /* Light text */
+            --question-text-color: #8ab4f8; /* Light blue for questions */
+            --lo-text-color: #b0c4de; /* Lighter blue for learning objective */
+            --border-color: #555; /* Darker borders */
+            --separator-color: #4a4f5a;
+            --label-bg: #454c5a;
+            --label-border: #6c757d;
+            --label-hover-bg: #525966;
+            --label-hover-border: #7a828a;
+            --button-bg: #8ab4f8;
+            --button-text: #202124;
+            --button-hover-bg: #a3c5f9;
+            --button-disabled-bg: #5f6368;
+            --feedback-correct-bg: #344e41;
+            --feedback-correct-text: #c7f9cc;
+            --feedback-correct-border: #52b788;
+            --feedback-incorrect-bg: #5e2129;
+            --feedback-incorrect-text: #f8d7da;
+            --feedback-incorrect-border: #a4133c;
+            --feedback-rationale-text: #adb5bd; /* Lighter gray for rationale */
+            --feedback-source-text: #c7d3e0;
+            --feedback-separator: #6c757d;
+            --radio-accent: #8ab4f8;
+        }
+
+        .light-theme {
+            --bg-color: #eef2f7;
+            --container-bg: #ffffff;
+            --text-color: #343a40;
+            --question-text-color: #0056b3;
+            --lo-text-color: #5a6e8a;
+            --border-color: #dee2e6;
+            --separator-color: #e9ecef;
+            --label-bg: #f8f9fa;
+            --label-border: #ced4da;
+            --label-hover-bg: #e2e6ea;
+            --label-hover-border: #adb5bd;
+            --button-bg: #007bff;
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --button-disabled-bg: #6c757d;
+            --feedback-correct-bg: #d1e7dd;
+            --feedback-correct-text: #0f5132;
+            --feedback-correct-border: #badbcc;
+            --feedback-incorrect-bg: #f8d7da;
+            --feedback-incorrect-text: #842029;
+            --feedback-incorrect-border: #f5c2c7;
+            --feedback-rationale-text: #495057;
+            --feedback-source-text: #343a40;
+            --feedback-separator: #ccc;
+            --radio-accent: #007bff;
+        }
+
+        /* --- General Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.7;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #theme-toggle-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--label-border);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+             transition: background-color 0.3s, color 0.3s;
+        }
+         #theme-toggle-button:hover {
+             opacity: 0.8;
+         }
+
+
+        #quiz-container {
+            max-width: 900px;
+            margin: 80px auto 30px auto;
+            background: var(--container-bg);
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--separator-color);
+            transition: border-color 0.3s;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 5px;
+        }
+        
+        .learning-objective {
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--lo-text-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--separator-color);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            color: var(--question-text-color);
+            transition: color 0.3s;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--label-border);
+            background-color: var(--label-bg);
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: var(--label-hover-bg);
+            border-color: var(--label-hover-border);
+        }
+
+        .options input[type="radio"]:checked+span {
+             font-weight: bold;
+             color: var(--question-text-color);
+        }
+        .options input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--radio-accent);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .check-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .check-button:hover {
+            opacity: 0.85;
+        }
+
+         .check-button:disabled {
+             background-color: var(--button-disabled-bg);
+             cursor: not-allowed;
+             opacity: 0.7;
+         }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: none;
+            border: 1px solid transparent;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-correct-bg);
+            color: var(--feedback-correct-text);
+            border-color: var(--feedback-correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-incorrect-bg);
+            color: var(--feedback-incorrect-text);
+            border-color: var(--feedback-incorrect-border);
+            display: block;
+        }
+
+        .feedback-status {
+             font-weight: bold;
+             font-size: 1.1em;
+             display: block;
+             margin-bottom: 8px;
+        }
+
+        .feedback-rationale {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--feedback-separator);
+            font-size: 0.9em;
+            color: var(--feedback-rationale-text);
+            transition: color 0.3s, border-color 0.3s;
+        }
+        
+        .feedback-source {
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--feedback-source-text);
+            background-color: rgba(0,0,0,0.1);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--question-text-color);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle-button">Toggle Theme</button>
+    <h1>Week 6 Tuesday Practice Quiz</h1>
+
+    <div id="quiz-container">
+        <!-- Questions will be loaded here by JavaScript -->
+    </div>
+
+    <script>
+        const quizData = [
+    {
+        learningObjective: "LO 1.1 (Overview of the Immune System): Describe the main purposes of the immune system and how clinical disease results when immune responses are inappropriate. (USMLE 1.B., 1.C.)",
+        question: "A 34-year-old woman presents with a facial rash that worsens with sun exposure, joint pain, and fatigue. Laboratory studies show anti-nuclear antibodies (ANA) and anti-double-stranded DNA (anti-dsDNA) antibodies. This patient's condition is a classic example of which type of immunological dysfunction?",
+        options: { 
+            A: "A lack of response, leading to immunodeficiency", 
+            B: "An appropriate response to a foreign pathogen", 
+            C: "An inappropriate response to self-antigens, leading to autoimmunity", 
+            D: "A complete failure of the innate immune system" 
+        },
+        correctAnswer: "C",
+        rationale: "The patient's presentation is characteristic of systemic lupus erythematosus (SLE), an autoimmune disease. The presence of autoantibodies (ANA, anti-dsDNA) indicates that her adaptive immune system is mounting an inappropriate attack against her own cellular components ('self-antigens'), leading to inflammation and tissue damage (immunopathology).",
+        source: "'Inappropriate response: immunopathology (e.g., allergy, autoimmunity)' (Immunology Slides, Page 21)"
+    },
+    {
+        learningObjective: "LO 1.1 (Overview of the Immune System): Describe the main purposes of the immune system and how clinical disease results when immune responses are inappropriate. (USMLE 1.B., 1.C.)",
+        question: "A 25-year-old man presents with his third episode of bacterial pneumonia in the past year. He also has a history of recurrent sinus infections. Laboratory evaluation reveals significantly low levels of IgG, IgA, and IgM. This patient's susceptibility to infections is most likely due to which type of immunological problem?",
+        options: { 
+            A: "Autoimmunity", 
+            B: "Immunopathology due to an overactive response", 
+            C: "Immune tolerance to a pathogen", 
+            D: "Immunodeficiency due to a lack of response" 
+        },
+        correctAnswer: "D",
+        rationale: "The patient's history of recurrent bacterial infections and low levels of all major antibody isotypes are hallmarks of an immunodeficiency, specifically Common Variable Immunodeficiency (CVID). This condition represents a 'lack of response' from the adaptive immune system, specifically the B cells' ability to produce antibodies, leading to an inability to effectively clear certain pathogens.",
+        source: "'Lack of response: immunodeficiency (e.g., common variable immunodeficiency, HIV-1 disease)' (Immunology Slides, Page 21)"
+    },
+    {
+        learningObjective: "LO 1.1 (Overview of the Immune System): Describe the main purposes of the immune system and how clinical disease results when immune responses are inappropriate. (USMLE 1.B., 1.C.)",
+        question: "A patient develops a severe skin rash, wheezing, and hypotension minutes after being stung by a bee. This rapid and life-threatening reaction is an example of an inappropriate immune response to a harmless environmental substance. This type of immunopathology is best classified as which of the following?",
+        options: { 
+            A: "An autoimmune response", 
+            B: "A delayed-type hypersensitivity reaction", 
+            C: "An allergic or immediate hypersensitivity reaction", 
+            D: "An immunodeficient state" 
+        },
+        correctAnswer: "C",
+        rationale: "The patient is experiencing anaphylaxis, a severe Type I (immediate) hypersensitivity reaction. This is a form of immunopathology where the immune system mounts an excessive and damaging response to a typically harmless foreign substance (an allergen). This is considered an 'inappropriate response' because the response itself, not the bee venom, is the primary cause of life-threatening pathology.",
+        source: "'Inappropriate response: immunopathology (e.g., allergy, autoimmunity)' (Immunology Slides, Page 21)"
+    },
+    {
+        learningObjective: "LO 1.2 (Overview of the Immune System): Explain how the immune system detects and responds to danger signals. (USMLE 1.B.10.)",
+        question: "A 45-year-old man presents with fever, cough, and shortness of breath. A chest X-ray reveals a lobar pneumonia, and sputum culture grows Streptococcus pneumoniae. The initial, rapid inflammatory response in his lungs is triggered by innate immune cells recognizing molecular structures common to this class of bacteria, such as peptidoglycan. These bacterial structures are best described as which of the following?",
+        options: { 
+            A: "Self-antigens", 
+            B: "Pathogen-associated molecular patterns (PAMPs)", 
+            C: "Damage-associated molecular patterns (DAMPs)", 
+            D: "Antibodies" 
+        },
+        correctAnswer: "B",
+        rationale: "PAMPs are conserved molecular structures found on foreign substances like pathogenic bacteria and viruses but are not normally present in the human body. Innate immune cells use pattern-recognition receptors (PRRs) to detect these PAMPs, which serves as the primary 'danger signal' to initiate an immune response.",
+        source: "'PRRs nonspecifically recognize molecular patterns called PAMPs (pathogen-associated molecular patterns)...' (Immunology Slides, Page 38)"
+    },
+    {
+        learningObjective: "LO 1.2 (Overview of the Immune System): Explain how the immune system detects and responds to danger signals. (USMLE 1.B.10.)",
+        question: "A 60-year-old man suffers a myocardial infarction. The ischemic injury to the cardiac tissue causes widespread cell death and the release of intracellular contents, such as ATP and mitochondrial DNA, into the extracellular space. These endogenous molecules trigger a sterile inflammatory response that contributes to tissue repair but also to further damage. These released 'self' molecules that signal tissue injury are known as which of the following?",
+        options: { 
+            A: "Pathogen-associated molecular patterns (PAMPs)", 
+            B: "Commensal-associated molecular patterns (CAMPs)", 
+            C: "Damage-associated molecular patterns (DAMPs)", 
+            D: "Immunoglobulins" 
+        },
+        correctAnswer: "C",
+        rationale: "DAMPs are endogenous molecules released from damaged or dying cells that signal a 'danger' to the immune system, initiating a non-infectious, or sterile, inflammatory response. This is a crucial mechanism for detecting tissue injury and initiating repair, but it can also contribute to pathology in conditions like myocardial infarction or trauma.",
+        source: "'...or (more generally) DAMPs (damage-associated molecular patterns)' (Immunology Slides, Page 38)"
+    },
+    {
+        learningObjective: "LO 1.2 (Overview of the Immune System): Explain how the immune system detects and responds to danger signals. (USMLE 1.B.10.)",
+        question: "A patient with a rapidly growing melanoma is treated with an immune checkpoint inhibitor. This therapy is designed to enhance the ability of the patient's own T cells to recognize and attack the cancer cells. The fundamental principle underlying this therapy is that the immune system can be trained to overcome its tolerance to certain 'self' cells that have become dangerous. This process is known as:",
+        options: { 
+            A: "Immunopathology", 
+            B: "Immunosurveillance", 
+            C: "Immune privilege", 
+            D: "Commensalism" 
+        },
+        correctAnswer: "B",
+        rationale: "Immunosurveillance is the concept that the immune system constantly patrols the body to identify and eliminate malignant cells. Cancer cells, while derived from 'self', express altered proteins that can be recognized as danger signals. The traditional 'self vs. non-self' paradigm fails to account for this critical function.",
+        source: "'The body sometimes needs to recognize and get rid of certain “self” cells (e.g., cancer)' and 'Doesn't work for: –Immunosurveillance (e.g., tumor immunology)' (Immunology Slides, Pages 25 & 26)"
+    },
+    {
+        learningObjective: "LO 1.3 (Overview of the Immune System): List the main components of the innate and adaptive immune systems. (USMLE 1.B.1-9.)",
+        question: "A newborn is diagnosed with DiGeorge syndrome due to a 22q11.2 deletion, resulting in the absence of a thymus. This infant will have a profound deficiency in the maturation of which of the following cell types, leading to a severe defect in cell-mediated immunity?",
+        options: { 
+            A: "B cells", 
+            B: "Neutrophils", 
+            C: "T cells", 
+            D: "Natural killer (NK) cells" 
+        },
+        correctAnswer: "C",
+        rationale: "The thymus is a primary lymphoid organ that is the essential site for the development and maturation of T cells. While T cell precursors originate in the bone marrow, they must migrate to the thymus to become functional. Without a thymus, T cell development is arrested, resulting in a severe T cell immunodeficiency.",
+        source: "'Primary -Bone marrow... B cells develop here) -Thymus (T cells develop here)' and Clinical Correlation: 'If the thymus is absent, there is no T cell immunity.' (Immunology Slides, Pages 33 & 34)"
+    },
+    {
+        learningObjective: "LO 1.3 (Overview of the Immune System): List the main components of the innate and adaptive immune systems. (USMLE 1.B.1-9.)",
+        question: "A 5-year-old child presents with a skin laceration that becomes red, swollen, and warm within hours. A complete blood count shows a high neutrophil count. These neutrophils are rapidly recruited to the site of injury to engulf bacteria. Neutrophils are a key cellular component of which branch of the immune system?",
+        options: { 
+            A: "The adaptive immune system", 
+            B: "The humoral immune system", 
+            C: "The innate immune system", 
+            D: "The secondary lymphoid system" 
+        },
+        correctAnswer: "C",
+        rationale: "Neutrophils are phagocytic cells that form the first line of defense against bacterial infections. They are a critical component of the innate immune system, which is characterized by its rapid, non-specific response to pathogens. Their presence and action within hours of an injury is a hallmark of an innate immune response.",
+        source: "'Components - Cells (e.g., neutrophils, monocytes/macrophages, dendritic cells, innate lymphoid cells (ILCs) including natural killer (NK) cells' (Immunology Slides, Page 37)"
+    },
+    {
+        learningObjective: "LO 1.3 (Overview of the Immune System): List the main components of the innate and adaptive immune systems. (USMLE 1.B.1-9.)",
+        question: "A patient receives a tetanus booster vaccine. Several weeks later, her blood is tested and found to have high levels of tetanus-specific IgG antibodies. These antibodies are produced by plasma cells, which are terminally differentiated versions of which of the following cells?",
+        options: { 
+            A: "T cells", 
+            B: "B cells", 
+            C: "Dendritic cells", 
+            D: "Macrophages" 
+        },
+        correctAnswer: "B",
+        rationale: "B cells (B lymphocytes) are the key cellular component of the humoral adaptive immune system. Upon encountering a specific antigen and receiving help from T cells, B cells become activated, proliferate, and differentiate into plasma cells, which are specialized factories for producing and secreting large quantities of antibodies.",
+        source: "'Components - Cells (T cells, B cells, plasma cells, others)... Antibody produced following B cell activation' (Immunology Slides, Page 41)"
+    },
+    {
+        learningObjective: "LO 1.4 (Overview of the Immune System): Compare and contrast the innate and adaptive immune systems. (USMLE 1.B.1-9.)",
+        question: "A 10-year-old boy recovers from a measles infection. Two years later, he is exposed to the measles virus again but does not develop any symptoms. His protection against reinfection is primarily due to a feature that is unique to the adaptive immune system. Which of the following features is responsible for this protection?",
+        options: { 
+            A: "Rapid response time (seconds to hours)", 
+            B: "Recognition of PAMPs", 
+            C: "Immunological memory", 
+            D: "Use of phagocytic cells" 
+        },
+        correctAnswer: "C",
+        rationale: "A hallmark feature of the adaptive immune system is the generation of immunological memory. The primary immune response to measles created long-lived memory B cells and T cells. Upon secondary exposure, these memory cells mount a faster, stronger, and more effective response that eliminates the virus before it can cause disease. The innate immune system lacks this memory feature.",
+        source: "'Features... On subsequent exposure (secondary immune response), immunological memory allows a response to occur seconds following exposure' (Immunology Slides, Page 42) and 'Memory - Present, and improves with reexposure' (Immunology Slides, Page 44)"
+    },
+    {
+        learningObjective: "LO 1.4 (Overview of the Immune System): Compare and contrast the innate and adaptive immune systems. (USMLE 1.B.1-9.)",
+        question: "The receptors used by the innate immune system, such as Toll-like receptors (TLRs), differ fundamentally from the receptors used by the adaptive immune system (TCRs and BCRs). Which of the following statements best describes a key difference in the genetics of these receptors?",
+        options: { 
+            A: "Innate receptors are produced by gene rearrangement, while adaptive receptors are encoded directly in the germline.", 
+            B: "Innate receptors are encoded directly in the germline, while adaptive receptors are produced by gene rearrangement.", 
+            C: "Both innate and adaptive receptors are encoded directly in the germline.", 
+            D: "Both innate and adaptive receptors are produced by gene rearrangement." 
+        },
+        correctAnswer: "B",
+        rationale: "Innate immune receptors (PRRs like TLRs) are encoded directly in the germline DNA, resulting in a limited number of stereotyped receptors. In contrast, the vast diversity of adaptive immune receptors (B cell and T cell receptors) is generated during lymphocyte development through a unique process of somatic recombination (gene rearrangement) of gene segments.",
+        source: "'Genetics - Encoded directly in germline DNA [Innate] vs. Produced by gene rearrangement, recombination, hypermutation [Adaptive]' (Immunology Slides, Page 44)"
+    },
+    {
+        learningObjective: "LO 1.4 (Overview of the Immune System): Compare and contrast the innate and adaptive immune systems. (USMLE 1.B.1-9.)",
+        question: "A patient presents with a small cut on their finger that occurred 4 hours ago. The area is already red and slightly swollen. This initial, rapid response is characteristic of the innate immune system. Which of the following correctly describes the timing of the innate versus a primary adaptive immune response?",
+        options: { 
+            A: "Innate: days to weeks; Adaptive: seconds to hours", 
+            B: "Innate: seconds to hours; Adaptive: days to weeks", 
+            C: "Both systems respond within seconds to hours.", 
+            D: "Both systems require days to weeks to respond." 
+        },
+        correctAnswer: "B",
+        rationale: "The innate immune system is pre-programmed and acts very quickly, within seconds to hours of encountering a pathogen. The adaptive immune system, when encountering a pathogen for the first time (a primary response), requires a period of clonal selection, expansion, and differentiation, which takes days to weeks to become fully effective.",
+        source: "'Timing - Seconds-hours [Innate] vs. Primary: days-weeks Secondary: seconds-hours [Adaptive]' (Immunology Slides, Page 44)"
+    },
+    {
+        learningObjective: "LO 1.5 (Overview of the Immune System): Describe what happens as an immune response subsides. (USMLE 1.C.6.)",
+        question: "A patient is recovering from a severe bacterial infection. As the pathogen is cleared, the systemic inflammatory response begins to resolve. Which of the following events is a key step in the subsidence of this acute immune response?",
+        options: { 
+            A: "A surge in pro-inflammatory cytokine production", 
+            B: "Apoptosis of most effector plasma cells and T-helper cells", 
+            C: "Increased chemotaxis of neutrophils to the site of infection", 
+            D: "Downregulation of anti-inflammatory T-helper cells" 
+        },
+        correctAnswer: "B",
+        rationale: "As the danger signals (pathogens) are eliminated, the activating signals for lymphocytes decrease. To prevent prolonged inflammation and tissue damage, the vast majority of the short-lived effector cells, including plasma cells and pro-inflammatory T-helper cells, undergo programmed cell death (apoptosis). A small subset is retained as memory cells.",
+        source: "'Activating signals for B cells decrease and most plasma cells die by apoptosis' and 'Pro-inflammatory T-helper cells undergo apoptosis and anti-inflammatory T-helper cells take over' (Immunology Slides, Page 52)"
+    },
+    {
+        learningObjective: "LO 1.5 (Overview of the Immune System): Describe what happens as an immune response subsides. (USMLE 1.C.6.)",
+        question: "Following the resolution of a localized skin abscess, the area undergoes healing and tissue repair. Which cell type is primarily responsible for clearing dead neutrophils, pathogens, and cellular debris, as well as initiating the repair process?",
+        options: { 
+            A: "B lymphocytes", 
+            B: "Cytotoxic T lymphocytes", 
+            C: "Neutrophils", 
+            D: "Macrophages" 
+        },
+        correctAnswer: "D",
+        rationale: "After the acute phase of inflammation, macrophages play a crucial 'cleanup' and 'repair' role. They phagocytose dead cells (like neutrophils that have formed pus) and debris. They also signal local cells and recruit specialized wound-healing cells to begin the process of tissue repair and remodeling.",
+        source: "'Macrophages eat dead pathogens and tissues, signal local cells to initiate repair, and signal special wound-healing cells to enter the damaged tissue' (Immunology Slides, Page 51)"
+    },
+    {
+        learningObjective: "LO 1.5 (Overview of the Immune System): Describe what happens as an immune response subsides. (USMLE 1.C.6.)",
+        question: "After a viral infection is cleared, most of the effector cells die off, but a small population of antibody-producing cells is maintained long-term in the lymphatic system. These cells are ready to produce antibodies quickly upon re-exposure to the same virus. What is the identity of these long-lived cells?",
+        options: { 
+            A: "Naive B cells", 
+            B: "Memory T cells", 
+            C: "Long-lived plasma cells", 
+            D: "Natural killer (NK) cells" 
+        },
+        correctAnswer: "C",
+        rationale: "While most plasma cells produced during an acute response are short-lived, a subset migrates to specific niches, such as the bone marrow or other lymphatic tissues. Here, they receive survival signals that allow them to live for long periods, continuously secreting low levels of antibody and providing a rapid source of protection upon re-exposure.",
+        source: "'Some plasma cells go to the lymphatic system where they receive signals to keep them alive for a long period, making them ready for the next exposure to the same organism' (Immunology Slides, Page 52)"
+    },
+    {
+        learningObjective: "LO 2.1 (Basics of Innate Immunity I): Describe major cells involved in innate immune responses, and know their roles. (USMLE 1.B.)",
+        question: "A 4-year-old boy presents with multiple skin abscesses. A sample from an abscess grows Staphylococcus aureus. Further workup reveals that his neutrophils can migrate to the site of infection and phagocytose bacteria, but they are unable to kill the ingested organisms due to a defect in generating reactive oxygen species. Which cell type is primarily dysfunctional in this patient?",
+        options: { 
+            A: "NK cells", 
+            B: "Macrophages", 
+            C: "Neutrophils", 
+            D: "Dendritic cells" 
+        },
+        correctAnswer: "C",
+        rationale: "The patient's presentation is classic for Chronic Granulomatous Disease (CGD). This disorder is characterized by a defect in NADPH oxidase within neutrophils (and other phagocytes), which prevents the 'respiratory burst' needed to produce reactive oxygen species for killing ingested pathogens like S. aureus. Neutrophils are the key cell type with the functional defect.",
+        source: "'Neutrophils... Ingestion by phagocytosis, then comes killing.' (Immunology Slides, Page 8) and 'Neutrophil Killing' (Immunology Slides, Page 39)"
+    },
+    {
+        learningObjective: "LO 2.1 (Basics of Innate Immunity I): Describe major cells involved in innate immune responses, and know their roles. (USMLE 1.B.)",
+        question: "A patient with a viral infection is found to have an increased number of lymphocytes that can recognize and kill virus-infected cells without prior sensitization. These cells are identified by their ability to destroy target cells that have downregulated MHC class I expression. Which of the following is the most likely identity of these cytotoxic cells?",
+        options: { 
+            A: "Basophils", 
+            B: "Eosinophils", 
+            C: "B cells", 
+            D: "Natural killer (NK) cells" 
+        },
+        correctAnswer: "D",
+        rationale: "Natural killer (NK) cells are a type of innate lymphoid cell that plays a crucial role in early defense against viral infections and tumors. A key mechanism of their function is recognizing and killing cells that have lost MHC class I expression, a common strategy used by viruses and cancer cells to evade T-cell mediated immunity.",
+        source: "'NK cells can recognize and destroy virus-infected cells...' and 'Virus-infected cells express less MHC Class 1 on their surface' (Immunology Slides, Pages 4 & 5)"
+    },
+    {
+        learningObjective: "LO 2.1 (Basics of Innate Immunity I): Describe major cells involved in innate immune responses, and know their roles. (USMLE 1.B.)",
+        question: "A tissue sample from an inflamed area shows large phagocytic cells containing cellular debris and bacteria. These cells not only serve as 'garbage collectors' but also produce pro-inflammatory cytokines and can present antigens to T cells to initiate an adaptive immune response. Which cell type best fits this description?",
+        options: { 
+            A: "Mast cells", 
+            B: "Neutrophils", 
+            C: "Macrophages", 
+            D: "Basophils" 
+        },
+        correctAnswer: "C",
+        rationale: "Macrophages are versatile cells of the innate immune system. They are known as 'big eaters' for their phagocytic capacity, clearing pathogens and cellular debris. They are also critical signaling cells that produce cytokines and serve as a crucial link to the adaptive immune system by acting as antigen-presenting cells (APCs).",
+        source: "'Macrophages: Phagocytose bacteria, cellular debris... Release inflammatory cytokines.' and 'Also function as antigen presenting cells (APCs) in the adaptive immune system' (Immunology Slides, Pages 4 & 7)"
+    },
+    {
+        learningObjective: "LO 2.2 (Basics of Innate Immunity I): Describe the main pattern recognition receptors of the innate immune system, and know their roles. (USMLE 1.B.6)",
+        question: "A macrophage encounters a gram-negative bacterium and is activated to produce inflammatory cytokines. This activation is initiated when a component of the bacterial outer membrane, lipopolysaccharide (LPS), binds to a specific receptor complex on the macrophage surface. Which of the following is the primary pattern recognition receptor (PRR) that recognizes LPS?",
+        options: { 
+            A: "NOD-like receptor (NLR)", 
+            B: "RIG-I-like receptor (RLR)", 
+            C: "Toll-like receptor 4 (TLR4)", 
+            D: "C-type lectin receptor" 
+        },
+        correctAnswer: "C",
+        rationale: "Toll-like receptor 4 (TLR4) is the key PRR responsible for recognizing lipopolysaccharide (LPS), a major PAMP found on the outer membrane of gram-negative bacteria. Binding of LPS to the TLR4/MD2/CD14 complex initiates a signaling cascade that leads to the production of inflammatory cytokines.",
+        source: "'External TLRs sense bacterial PAMPs... TLR2 and TLR4 recognize bacterial lipopolysaccharides (LPS)' (Immunology Slides, Page 6 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 2.2 (Basics of Innate Immunity I): Describe the main pattern recognition receptors of the innate immune system, and know their roles. (USMLE 1.B.6)",
+        question: "During a viral infection, a dendritic cell detects the presence of double-stranded RNA (dsRNA), a common intermediate in the replication of many viruses, within its endosomes. This recognition triggers the production of Type I interferons. Which endosomal Toll-like receptor is responsible for sensing dsRNA?",
+        options: { 
+            A: "TLR2", 
+            B: "TLR3", 
+            C: "TLR5", 
+            D: "TLR9" 
+        },
+        correctAnswer: "B",
+        rationale: "TLR3 is a PRR located within the endosomal compartment of cells. Its specific function is to recognize double-stranded RNA (dsRNA), which is a PAMP associated with viral infections. Activation of TLR3 is a critical step in initiating an antiviral response, including the production of Type I interferons.",
+        source: "'Internal (Endosomal) TLRs... TLR3 recognizes double-stranded RNA (dsRNA), found in some viruses (e.g., Herpes simplex)' (Immunology Slides, Page 7 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 2.2 (Basics of Innate Immunity I): Describe the main pattern recognition receptors of the innate immune system, and know their roles. (USMLE 1.B.6)",
+        question: "In addition to TLRs, cells have cytosolic receptors that survey the cytoplasm for signs of infection. One family of these receptors recognizes fragments of bacterial peptidoglycan that have been internalized by the cell, leading to activation of NF-κB. Which family of PRRs performs this function?",
+        options: { 
+            A: "C-type lectin receptors", 
+            B: "Scavenger receptors", 
+            C: "NOD-like receptors (NLRs)", 
+            D: "External Toll-like receptors" 
+        },
+        correctAnswer: "C",
+        rationale: "NOD-like receptors (NLRs), such as NOD1 and NOD2, are intracellular PRRs. They are specialized to detect components of bacterial cell walls, specifically peptidoglycan fragments, within the cytosol. This allows the cell to sense intracellular bacterial infections and initiate an inflammatory response.",
+        source: "'NOD-like receptors are intracellular... NOD1 and NOD2 recognize PAMPs that result from internal digestion of pathogens' (Immunology Slides, Page 20 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 2.3 (Basics of Innate Immunity I): Explain the role of the major pro-inflammatory and anti-inflammatory cytokines involved in innate immune responses. (USMLE 1.B.7.)",
+        question: "A patient with septic shock develops a high fever. This systemic response is mediated by endogenous pyrogens, which are cytokines that act on the hypothalamus to reset the body's thermoregulatory center. Which of the following cytokines is a major endogenous pyrogen?",
+        options: { 
+            A: "IL-10", 
+            B: "TGF-β", 
+            C: "IL-1β", 
+            D: "Interferon-α" 
+        },
+        correctAnswer: "C",
+        rationale: "IL-1β, along with IL-6 and TNF-α, are the primary pro-inflammatory cytokines that function as endogenous pyrogens. They are released during infection and inflammation and travel to the brain, where they induce fever. IL-10 and TGF-β are anti-inflammatory.",
+        source: "'Endogenous pyrogens: IL-1β, IL-6, and TNF-α' and 'Pyrogens to know: IL-1, IL-6, TNF-α' (Immunology Slides, Pages 13 & 14 of Basics of Innate Immunity I)"
+    },
+    {
+        learningObjective: "LO 2.3 (Basics of Innate Immunity I): Explain the role of the major pro-inflammatory and anti-inflammatory cytokines involved in innate immune responses. (USMLE 1.B.7.)",
+        question: "A patient with rheumatoid arthritis is treated with etanercept, a biologic drug that functions as a decoy receptor. This drug is highly effective at reducing inflammation in the joints by binding to and neutralizing which key pro-inflammatory cytokine?",
+        options: { 
+            A: "IL-12", 
+            B: "Interferon-γ", 
+            C: "IL-10", 
+            D: "Tumor necrosis factor-α (TNF-α)" 
+        },
+        correctAnswer: "D",
+        rationale: "TNF-α is a critical pro-inflammatory cytokine involved in the pathogenesis of many chronic inflammatory diseases, including rheumatoid arthritis. Etanercept is a fusion protein that mimics the TNF receptor, acting as a 'decoy' to bind up free TNF-α and prevent it from engaging its normal receptor on cells, thereby blocking its inflammatory effects.",
+        source: "'Because of the overlap, TNF-α is a therapeutic target in many chronic inflammatory diseases. Etanercept is a decoy receptor that prevents (intercepts) TNF-α from engaging its normal receptor' (Immunology Slides, Page 13 of Basics of Innate Immunity I)"
+    },
+    {
+        learningObjective: "LO 2.3 (Basics of Innate Immunity I): Explain the role of the major pro-inflammatory and anti-inflammatory cytokines involved in innate immune responses. (USMLE 1.B.7.)",
+        question: "As an inflammatory response is brought under control, certain cytokines are produced to downregulate the production of pro-inflammatory cytokines and inhibit the activation of innate immune cells. Which of the following is a major anti-inflammatory cytokine with these properties?",
+        options: { 
+            A: "IL-1β", 
+            B: "IL-6", 
+            C: "IL-10", 
+            D: "TNF-α" 
+        },
+        correctAnswer: "C",
+        rationale: "IL-10 is the quintessential anti-inflammatory cytokine. It is produced by macrophages and other cells late in an immune response and functions to suppress the immune system by inhibiting the production of pro-inflammatory cytokines like TNF-α, IL-1, and IL-6, and by inhibiting the activation of innate immune cells.",
+        source: "'Anti-inflammatory cytokines - IL-10 ... –Inhibits pro-inflammatory cytokines (TNF-α, IL-1, IL-6, IL-8, and IL-12) –Inhibits innate immune cell activation' (Immunology Slides, Page 17 of Basics of Innate Immunity I)"
+    },
+    {
+        learningObjective: "LO 2.4 (Basics of Innate Immunity I): Describe how proteins in the complement system... describe disorders in regulation of the complement system. (USMLE 1.C.7., 1.B.6.)",
+        question: "A 22-year-old college student presents with fever, headache, and nuchal rigidity. A lumbar puncture confirms a diagnosis of meningococcal meningitis caused by Neisseria meningitidis. A deficiency in which part of the complement system would most significantly increase a patient's susceptibility to this type of infection?",
+        options: { 
+            A: "The C1 inhibitor", 
+            B: "The alternative pathway", 
+            C: "The terminal complement pathway (C5b-C9)", 
+            D: "The lectin pathway" 
+        },
+        correctAnswer: "C",
+        rationale: "The terminal complement pathway forms the Membrane Attack Complex (MAC), which punches holes in the cell membranes of pathogens, causing lysis. This lytic function is critically important for defense against encapsulated bacteria, particularly Neisseria species. Deficiencies in any of the terminal components (C5, C6, C7, C8, or C9) lead to a dramatic increase in susceptibility to recurrent Neisseria infections.",
+        source: "'Clinical Correlation: Critically important in host defense against Neisseria gonorrheae, Neisseria meningitidis' (Immunology Slides, Page 25 of Basics of Innate Immunity I)"
+    },
+    {
+        learningObjective: "LO 2.4 (Basics of Innate Immunity I): Describe how proteins in the complement system... describe disorders in regulation of the complement system. (USMLE 1.C.7., 1.B.6.)",
+        question: "A 30-year-old woman is diagnosed with paroxysmal nocturnal hemoglobinuria (PNH). Her red blood cells are found to be exquisitely sensitive to complement-mediated lysis. This condition is caused by a somatic mutation in the PIGA gene, which leads to a deficiency of GPI-anchored proteins on the cell surface. Which two GPI-anchored proteins that normally protect cells from terminal complement activation are deficient in PNH?",
+        options: { 
+            A: "C1 inhibitor and Factor H", 
+            B: "C3b and C4b", 
+            C: "Protectin (CD59) and Decay Accelerating Factor (DAF, CD55)", 
+            D: "Mannose-binding lectin and C-reactive protein" 
+        },
+        correctAnswer: "C",
+        rationale: "Protectin (CD59) and DAF (CD55) are two key regulatory proteins that are anchored to the cell membrane by a GPI tail, which is synthesized via the PIGA gene product. CD59 directly inhibits the formation of the MAC, while DAF accelerates the decay of C3 convertases. Loss of these proteins leaves red blood cells unprotected from spontaneous complement activation, leading to intravascular hemolysis.",
+        source: "'CD59: Protectin • CD55: Decay accelerating factor (DAF) • Each uses a PIGA molecule to attach to cell membranes' (Immunology Slides, Page 30 of Basics of Innate Immunity I)"
+    },
+    {
+        learningObjective: "LO 2.4 (Basics of Innate Immunity I): Describe how proteins in the complement system... describe disorders in regulation of the complement system. (USMLE 1.C.7., 1.B.6.)",
+        question: "A patient presents with recurrent episodes of painless, non-pitting swelling of the face, hands, and larynx. Laboratory tests show low levels of C4 and a normal C1q level. The patient's symptoms are caused by excessive production of bradykinin due to dysregulation of the classical complement and contact activation systems. A deficiency in which regulatory protein is the most likely cause?",
+        options: { 
+            A: "Factor H", 
+            B: "Protectin (CD59)", 
+            C: "C1 inhibitor (C1INH)", 
+            D: "S protein" 
+        },
+        correctAnswer: "C",
+        rationale: "This is a classic presentation of Hereditary Angioedema (HAE), which is caused by a deficiency of C1 inhibitor (C1INH). C1INH is the primary regulator of C1 activation in the classical complement pathway. Its deficiency leads to uncontrolled C1 activation (consuming C4 and C2) and, importantly, unregulated activity of the kallikrein-kinin system, leading to overproduction of bradykinin, the mediator of the swelling.",
+        source: "'C1INH deficiency (also called hereditary angioedema, HAE) can result in excessive C4 and C2 consumption... But C1INH deficiency also allows abundant production of bradykinin that results in episodes of painless swelling' (Immunology Slides, Page 41 of Basics of Innate Immunity I)"
+    },
+    {
+        learningObjective: "LO 3.1 (Basics of Innate Immunity II): Describe the TLR system... and recognize that gene variants in TLRs... cause human Inborn Errors in Immunity. (USMLE 1.B.6.)",
+        question: "A 2-year-old child presents with recurrent, severe bacterial infections, particularly with Streptococcus pneumoniae. The infections are unusually difficult to treat despite appropriate antibiotics. A genetic workup reveals a mutation that inactivates IRAK4, a critical kinase in the Toll-like receptor signaling pathway. The function of which of the following receptors would be most profoundly impaired?",
+        options: { 
+            A: "The T-cell receptor", 
+            B: "The B-cell receptor", 
+            C: "Most Toll-like receptors and the IL-1 receptor", 
+            D: "The interferon-gamma receptor" 
+        },
+        correctAnswer: "C",
+        rationale: "IRAK4 is a key downstream signaling molecule for most Toll-like receptors (TLRs) and the IL-1 receptor, as they share the MyD88-dependent signaling pathway. A deficiency in IRAK4 leads to a profound immunodeficiency characterized by susceptibility to pyogenic bacterial infections because the innate immune system cannot properly respond to PAMPs recognized by these receptors.",
+        source: "'Deficiency of IRAK4 or MyD88 causes human immunodeficiency (High yield)' and 'Most TLRs use this signaling pathway, as does the receptor for IL-1' (Immunology Slides, Pages 13 & 14 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.1 (Basics of Innate Immunity II): Describe the TLR system... and recognize that gene variants in TLRs... cause human Inborn Errors in Immunity. (USMLE 1.B.6.)",
+        question: "A young, previously healthy man develops severe COVID-19 requiring mechanical ventilation. Genetic sequencing identifies a loss-of-function variant in the TLR7 gene. The impaired function of TLR7 would most directly compromise the ability of his innate immune cells to recognize which of the following?",
+        options: { 
+            A: "Bacterial lipopolysaccharide (LPS)", 
+            B: "Double-stranded viral RNA (dsRNA)", 
+            C: "Single-stranded viral RNA (ssRNA)", 
+            D: "Unmethylated CpG DNA" 
+        },
+        correctAnswer: "C",
+        rationale: "TLR7 is an endosomal receptor that specifically recognizes single-stranded RNA (ssRNA), which is the genetic material for coronaviruses like SARS-CoV-2. Loss-of-function variants in TLR7 have been associated with severe COVID-19, particularly in younger males, because the initial innate antiviral response is impaired.",
+        source: "'Internal (Endosomal) TLRs... TLR7 and TLR8 recognize single-stranded RNA (ssRNA), found in many viruses, including SARS-CoV-2' and 'Clinical Correlation COVID-19 - ssRNA: TLR7, TLR8 -TLR7 variants associated with severe COVID-19 in young persons' (Immunology Slides, Pages 7 & 8 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.1 (Basics of Innate Immunity II): Describe the TLR system... and recognize that gene variants in TLRs... cause human Inborn Errors in Immunity. (USMLE 1.B.6.)",
+        question: "A 1-year-old boy presents with recurrent infections and is diagnosed with an immunodeficiency caused by a mutation in the IKK-gamma gene (also known as NEMO). This defect impairs the activation of the NF-κB transcription factor. In addition to immunodeficiency, this patient is also at risk for which of the following conditions?",
+        options: { 
+            A: "Chronic granulomatous disease", 
+            B: "Chédiak-Higashi syndrome", 
+            C: "Anhidrotic ectodermal dysplasia", 
+            D: "Familial cold autoinflammatory syndrome" 
+        },
+        correctAnswer: "C",
+        rationale: "NEMO (IKK-gamma) is a crucial component of the IKK complex, which is essential for activating NF-κB in response to TLR signaling and other stimuli. Mutations in NEMO not only cause an immunodeficiency (specifically, a hyper-IgM phenotype) but also lead to a developmental disorder called anhidrotic ectodermal dysplasia, characterized by defects in skin, conical teeth, and hair.",
+        source: "'IKK-gamma a.k.a. NEMO. NEMO gene variants cause: – incontinentia pigmenti – anhidrotic ectodermal dysplasia (skin, conical teeth, hair) – impaired antibody class switching (hyper-IgM phenotype) and recurrent infections' (Immunology Slides, Page 15 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.2 (Basics of Innate Immunity II): Describe how activation of the inflammasome causes autoinflammatory diseases.",
+        question: "A 6-month-old infant presents with recurrent episodes of fever, a non-urticarial rash, and joint pain, which are consistently triggered by exposure to cold temperatures. Genetic testing reveals a gain-of-function mutation in the NLRP3 gene. This mutation leads to constitutive activation of which of the following multiprotein complexes?",
+        options: { 
+            A: "The proteasome", 
+            B: "The inflammasome", 
+            C: "The spliceosome", 
+            D: "The ribosome" 
+        },
+        correctAnswer: "B",
+        rationale: "The patient's presentation is classic for Familial Cold Autoinflammatory Syndrome (FCAS1), an autoinflammatory disease. It is caused by gain-of-function mutations in NLRP3 (also called cryopyrin). NLRP3 is the central sensor protein of the inflammasome, a complex that, when activated, cleaves pro-caspase 1 to active caspase 1, leading to the production of the highly pro-inflammatory cytokines IL-1β and IL-18.",
+        source: "'Familial cold autoinflammatory syndrome... NLRP3 gain-of-function gene variant' and 'Cryopyrin forms an inflammasome and binds procaspase 1...' (Immunology Slides, Pages 24 & 26 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.2 (Basics of Innate Immunity II): Describe how activation of the inflammasome causes autoinflammatory diseases.",
+        question: "Activation of the NLRP3 inflammasome leads to the cleavage and activation of caspase-1. Active caspase-1 then cleaves a pro-cytokine into its active, secreted form. The overproduction of this cytokine is a central feature of autoinflammatory diseases. Which pro-inflammatory cytokine is directly processed and activated by caspase-1?",
+        options: { 
+            A: "TNF-α", 
+            B: "Interferon-γ", 
+            C: "IL-10", 
+            D: "IL-1β" 
+        },
+        correctAnswer: "D",
+        rationale: "The primary function of the inflammasome/caspase-1 complex is to process pro-IL-1β into its biologically active form, IL-1β. IL-1β is a potent pro-inflammatory cytokine, and its dysregulated production is the direct cause of the symptoms seen in autoinflammatory syndromes like FCAS.",
+        source: "'Proteolysis of procaspase 1 produces caspase 1, which makes IL-1β from pro- IL-1β' (Immunology Slides, Page 24 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.2 (Basics of Innate Immunity II): Describe how activation of the inflammasome causes autoinflammatory diseases.",
+        question: "A patient with an autoinflammatory disease caused by an NLRP3 mutation is treated with canakinumab. This medication effectively controls the patient's fevers and rashes. What is the mechanism of action of canakinumab?",
+        options: { 
+            A: "It is a monoclonal antibody that binds to and neutralizes IL-1β.", 
+            B: "It is a small molecule inhibitor of the NLRP3 protein.", 
+            C: "It is a recombinant IL-1 receptor antagonist.", 
+            D: "It is a monoclonal antibody that binds to TNF-α." 
+        },
+        correctAnswer: "A",
+        rationale: "Since the pathology of NLRP3-associated autoinflammatory diseases is driven by the overproduction of IL-1β, a logical therapeutic strategy is to block the action of this cytokine. Canakinumab is a human monoclonal antibody that specifically targets and neutralizes IL-1β, preventing it from binding to its receptor and mediating inflammation.",
+        source: "'Can be treated with: – canakinumab (mAb to IL-1β)' (Immunology Slides, Page 26 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.3 (Basics of Innate Immunity II): Recognize some other PRRs in the innate immune system.",
+        question: "A patient develops a severe viral infection. Inside the infected cells, the virus is replicating its RNA genome in the cytoplasm. The cell detects this cytoplasmic viral RNA via a specific class of PRRs, leading to the production of Type I interferons. Which of the following receptors is responsible for this detection?",
+        options: { 
+            A: "Toll-like receptor 4 (TLR4)", 
+            B: "NOD-like receptor 2 (NOD2)", 
+            C: "C-type lectin receptor", 
+            D: "RIG-I-like receptor (RLR)" 
+        },
+        correctAnswer: "D",
+        rationale: "RIG-I-like receptors (RLRs), such as RIG-1 and MDA-5, are cytosolic PRRs that are specialized to detect viral RNA in the cytoplasm. This is a key pathway for initiating an antiviral state within the cell and for producing Type I interferons to alert neighboring cells.",
+        source: "'RLRs - RIG-I-like receptors (RLRs) - Detection of cytoplasmic viral RNA' (Immunology Slides, Page 30 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.3 (Basics of Innate Immunity II): Recognize some other PRRs in the innate immune system.",
+        question: "A patient with a history of recurrent, severe mucocutaneous yeast infections is found to have a genetic defect in the dectin-1 signaling pathway. This defect impairs the ability of their phagocytes to recognize and respond to fungal pathogens. Dectin-1 belongs to which family of pattern recognition receptors?",
+        options: { 
+            A: "Toll-like receptors", 
+            B: "NOD-like receptors", 
+            C: "C-type lectin receptors", 
+            D: "RIG-I-like receptors" 
+        },
+        correctAnswer: "C",
+        rationale: "C-type lectin receptors (CLRs) are a class of PRRs that recognize carbohydrate structures on the surface of pathogens. Dectin-1 is a key CLR that recognizes β-glucans, a major component of fungal cell walls. Defects in the dectin-1 pathway lead to a specific susceptibility to fungal infections, such as chronic mucocutaneous candidiasis.",
+        source: "'C-type Lectin Receptors - Recognize carbohydrates found in various fungi...' and 'Various defects in the dectin-1–CARD9-Th17 pathway cause familial chronic mucocutaneous candidiasis' (Immunology Slides, Page 31 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.3 (Basics of Innate Immunity II): Recognize some other PRRs in the innate immune system.",
+        question: "The STING pathway is an important innate immune mechanism for detecting viral and bacterial infections. This pathway is activated when its sensor, cGAS, recognizes a specific type of molecule in the cytoplasm. What does the cGAS/STING pathway primarily detect?",
+        options: { 
+            A: "Single-stranded viral RNA", 
+            B: "Bacterial lipopolysaccharide", 
+            C: "Cytosolic double-stranded DNA", 
+            D: "Fungal β-glucans" 
+        },
+        correctAnswer: "C",
+        rationale: "The STING pathway is dedicated to sensing the presence of double-stranded DNA (dsDNA) in the cytoplasm, which is a sign of infection by DNA viruses or some bacteria. The sensor cGAS binds to dsDNA and synthesizes the second messenger cGAMP, which in turn activates STING to induce a Type I interferon response.",
+        source: "'The STING Pathway - Detection of dsDNA by cytosolic receptors' (Immunology Slides, Page 29 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.4 (Basics of Innate Immunity II): Describe how neutrophils circulate, enter tissue, ingest organisms, and kill them. Describe how Chédiak-Higashi syndrome and chronic granulomatous disease affect neutrophil function. (USMLE 1.B.1., 2.A.4.)",
+        question: "A 3-year-old boy presents with recurrent skin abscesses and pneumonia caused by Staphylococcus aureus and Aspergillus fumigatus. A dihydrorhodamine (DHR) flow cytometry test is performed on his neutrophils and shows an absent respiratory burst. This finding is diagnostic for which of the following disorders?",
+        options: { 
+            A: "Leukocyte adhesion deficiency", 
+            B: "Chédiak-Higashi syndrome", 
+            C: "Chronic granulomatous disease (CGD)", 
+            D: "Severe combined immunodeficiency (SCID)" 
+        },
+        correctAnswer: "C",
+        rationale: "Chronic granulomatous disease (CGD) is caused by a defect in the NADPH oxidase enzyme complex, which prevents neutrophils from producing reactive oxygen species (the respiratory burst) to kill ingested pathogens. This leads to recurrent infections with catalase-positive organisms like S. aureus and Aspergillus. The DHR test is the modern diagnostic standard for CGD.",
+        source: "'Deficiency of any one causes chronic granulomatous disease (CGD)' and 'Respiratory burst can be evaluated in the lab – DHR (dihydrorhodamine) assay: current' (Immunology Slides, Pages 39 & 40 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.4 (Basics of Innate Immunity II): Describe how neutrophils circulate, enter tissue, ingest organisms, and kill them. Describe how Chédiak-Higashi syndrome and chronic granulomatous disease affect neutrophil function. (USMLE 1.B.1., 2.A.4.)",
+        question: "A 5-year-old child with partial oculocutaneous albinism (silvery hair) presents with recurrent pyogenic infections. A peripheral blood smear reveals giant cytoplasmic granules within his neutrophils. These abnormal granules interfere with the neutrophil's ability to undergo diapedesis. What is the most likely diagnosis?",
+        options: { 
+            A: "Chronic granulomatous disease (CGD)", 
+            B: "Chédiak-Higashi syndrome", 
+            C: "Leukocyte adhesion deficiency", 
+            D: "Myeloperoxidase deficiency" 
+        },
+        correctAnswer: "B",
+        rationale: "Chédiak-Higashi syndrome is an autosomal recessive disorder caused by a defect in a lysosomal trafficking regulator protein. This leads to the formation of giant, non-functional granules in various cells, including neutrophils. These large granules impair neutrophil function, including their ability to squeeze through the endothelium (diapedesis), leading to recurrent infections. The partial albinism is a key associated finding.",
+        source: "'in Chédiak-Higashi syndrome, large cytoplasmic granules interfere with diapedesis' and 'Patients typically have silvery blond hair and blue eyes' (Immunology Slides, Pages 36 & 37 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.4 (Basics of Innate Immunity II): Describe how neutrophils circulate, enter tissue, ingest organisms, and kill them. Describe how Chédiak-Higashi syndrome and chronic granulomatous disease affect neutrophil function. (USMLE 1.B.1., 2.A.4.)",
+        question: "The initial step of neutrophil extravasation from the bloodstream into inflamed tissue involves the neutrophil slowing down and 'rolling' along the endothelial surface. This rolling is mediated by a weak binding interaction between which two molecules?",
+        options: { 
+            A: "Neutrophil integrins and endothelial ICAM-1", 
+            B: "Neutrophil selectin ligands and endothelial selectins", 
+            C: "Neutrophil TLR4 and bacterial LPS", 
+            D: "Neutrophil chemokine receptors and endothelial chemokines" 
+        },
+        correctAnswer: "B",
+        rationale: "The process of neutrophil extravasation begins with 'tethering and rolling'. This is a low-affinity interaction mediated by selectin ligands (like Sialyl-Lewis-x) on the surface of the neutrophil binding to selectins (E-selectin and P-selectin) expressed on the surface of activated endothelial cells. This interaction is strong enough to slow the neutrophil but weak enough to allow it to roll along the vessel wall.",
+        source: "'Begins with slowing and rolling. A ‘selectin ligand’ (Sialyl-Lewis-x) on the neutrophil weakly binds a vascular endothelial selectin' (Immunology Slides, Page 34 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.5 (Basics of Innate Immunity II): Describe the IL-12, interferon-gamma pathway. (USMLE 1.B.7.)",
+        question: "A child who received the live attenuated BCG vaccine for tuberculosis develops a severe, disseminated mycobacterial infection. A workup reveals a genetic defect that impairs the host defense against mycobacteria. A defect in the receptor for which of the following cytokines is most likely responsible for this susceptibility?",
+        options: { 
+            A: "IL-4", 
+            B: "IL-10", 
+            C: "IL-1β", 
+            D: "Interferon-gamma (IFN-γ)" 
+        },
+        correctAnswer: "D",
+        rationale: "The IL-12/IFN-γ pathway is critical for macrophage activation and host defense against intracellular pathogens, especially mycobacteria. Macrophages produce IL-12, which stimulates T cells and NK cells to produce IFN-γ. IFN-γ then acts back on macrophages to enhance their killing ability. A defect in the IFN-γ receptor breaks this crucial feedback loop, leading to a condition known as Mendelian Susceptibility to Mycobacterial Disease (MSMD).",
+        source: "'An IFN-gamma receptor gene variant causes similar infections' and 'Defects in the IL-12, IFN-gamma pathway cause “Mendelian Susceptibility to Mycobacterial Disease” (MSMD)' (Immunology Slides, Page 44 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.5 (Basics of Innate Immunity II): Describe the IL-12, interferon-gamma pathway. (USMLE 1.B.7.)",
+        question: "A macrophage phagocytoses Mycobacterium tuberculosis. In response, the macrophage produces a cytokine that is essential for driving the differentiation of T helper cells into the Th1 subtype and for activating NK cells to produce IFN-γ. Which cytokine produced by the macrophage is responsible for this critical step?",
+        options: { 
+            A: "IL-12", 
+            B: "IL-1β", 
+            C: "TNF-α", 
+            D: "IL-10" 
+        },
+        correctAnswer: "A",
+        rationale: "IL-12 is the key cytokine produced by macrophages and dendritic cells in response to intracellular pathogens. Its primary role is to stimulate NK cells and T cells to produce IFN-γ, which is the principal macrophage-activating cytokine. This establishes the positive feedback loop essential for controlling mycobacterial infections.",
+        source: "'This induces IL-12 production in macrophages, and other cells... Via an IL-12 receptor on T cells and NK cells, IL-12 induces production of IFN-gamma and TNF-alpha' (Immunology Slides, Page 43 of Basics of Innate Immunity II)"
+    },
+    {
+        learningObjective: "LO 3.5 (Basics of Innate Immunity II): Describe the IL-12, interferon-gamma pathway. (USMLE 1.B.7.)",
+        question: "The signaling cascade downstream of the interferon-gamma receptor involves the phosphorylation and activation of specific transcription factors that migrate to the nucleus to induce gene expression for macrophage activation. This signaling pathway is best known as which of the following?",
+        options: { 
+            A: "MyD88-dependent pathway", 
+            B: "NF-κB pathway", 
+            C: "JAK-STAT pathway", 
+            D: "MAP kinase pathway" 
+        },
+        correctAnswer: "C",
+        rationale: "Many cytokine receptors, including the interferon-gamma receptor, lack intrinsic kinase activity. They signal through associated Janus kinases (JAKs). Upon cytokine binding, JAKs become activated and phosphorylate the receptor, creating docking sites for Signal Transducer and Activator of Transcription (STAT) proteins. The STATs are then phosphorylated, dimerize, and translocate to the nucleus to regulate gene expression.",
+        source: "'Signal from an activated IFN-gamma receptor is transduced to the nucleus via a “JAK-STAT” pathway' (Immunology Slides, Page 44 of Basics of Innate Immunity II)"
+    }
+];
+
+
+        const quizContainer = document.getElementById('quiz-container');
+        const themeToggleButton = document.getElementById('theme-toggle-button');
+        const bodyElement = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                bodyElement.classList.add('light-theme');
+                themeToggleButton.textContent = 'Switch to Dark Mode';
+            } else {
+                bodyElement.classList.remove('light-theme');
+                themeToggleButton.textContent = 'Switch to Light Mode';
+            }
+            localStorage.setItem('quizTheme', theme);
+        }
+
+        function loadQuiz() {
+            quizData.forEach((qData, index) => {
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.id = `q${index}`;
+
+                const loText = document.createElement('div');
+                loText.classList.add('learning-objective');
+                loText.textContent = qData.learningObjective;
+                questionBlock.appendChild(loText);
+
+                const questionText = document.createElement('p');
+                questionText.classList.add('question-text');
+                questionText.innerHTML = `${index + 1}. ${qData.question}`;
+                questionBlock.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                for (const optionKey in qData.options) {
+                    const optionId = `q${index}_${optionKey}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `q${index}`;
+                    radioInput.value = optionKey;
+                    radioInput.id = optionId;
+                    const labelText = document.createElement('span');
+                    labelText.textContent = ` ${optionKey}. ${qData.options[optionKey]}`;
+                    label.appendChild(radioInput);
+                    label.appendChild(labelText);
+                    optionsDiv.appendChild(label);
+                }
+                questionBlock.appendChild(optionsDiv);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('button-container');
+
+                const checkButton = document.createElement('button');
+                checkButton.textContent = 'Check Answer';
+                checkButton.classList.add('check-button');
+                checkButton.onclick = () => checkAnswer(index);
+                buttonContainer.appendChild(checkButton);
+                
+                questionBlock.appendChild(buttonContainer);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                questionBlock.appendChild(feedbackDiv);
+
+                quizContainer.appendChild(questionBlock);
+            });
+        }
+
+        function checkAnswer(questionIndex) {
+            const questionBlockElement = document.getElementById(`q${questionIndex}`);
+            const selectedRadioButton = questionBlockElement.querySelector('input[type="radio"]:checked');
+
+            if (!selectedRadioButton) {
+                alert("Please select an answer first.");
+                return;
+            }
+
+            const selectedOptionKey = selectedRadioButton.value;
+            const qData = quizData[questionIndex];
+            const feedbackDiv = questionBlockElement.querySelector('.feedback');
+            const correct = selectedOptionKey === qData.correctAnswer;
+
+            let feedbackHTML = '';
+
+            if (correct) {
+                feedbackHTML = `<span class="feedback-status">Correct!</span>`;
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                 feedbackHTML = `<span class="feedback-status">Incorrect.</span> The correct answer is ${qData.correctAnswer}.`;
+                feedbackDiv.className = 'feedback incorrect';
+            }
+
+            feedbackHTML += `<div class="feedback-rationale"><strong>Rationale:</strong> ${qData.rationale}</div>`;
+            feedbackHTML += `<div class="feedback-source">${qData.source}</div>`;
+            feedbackDiv.innerHTML = feedbackHTML;
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            if (bodyElement.classList.contains('light-theme')) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQuiz();
+        });
+
+    </script>
+
+</body>
+</html>```
